@@ -9,7 +9,7 @@
     <ProductVersion>10.0.20506</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <RootNamespace></RootNamespace>
-    <ProjectGuid>{A6EFA203-A611-C8EC-1FC4-BA97FC308C43}</ProjectGuid>
+    <ProjectGuid>{412DF81C-C41E-989F-EE1B-D2B12F4A4E99}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <AssemblyName>Assembly-CSharp</AssemblyName>
@@ -53,17 +53,15 @@
     <UnityVersion>2020.3.22f1</UnityVersion>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="Assets\Scripts\LevelGenerator.cs" />
+    <Compile Include="Assets\Scripts\PathFinding\PathFinding.cs" />
     <Compile Include="Assets\Scripts\CameraController.cs" />
     <Compile Include="Assets\Scripts\Rotate.cs" />
-    <Compile Include="Assets\Scripts\CollisionsProcessor.cs" />
-    <Compile Include="Assets\NextLevelTrigger.cs" />
-    <Compile Include="Assets\GameManager.cs" />
-    <Compile Include="Assets\SpriteFollow.cs" />
-    <Compile Include="Assets\Scripts\PathFinding\Grid.cs" />
-    <Compile Include="Assets\Scripts\PathFinding\PathFinding.cs" />
     <Compile Include="Assets\Scripts\PathFinding\Node.cs" />
+    <Compile Include="Assets\Scripts\LevelGenerator.cs" />
     <Compile Include="Assets\Scripts\PathFinding\Point.cs" />
+    <Compile Include="Assets\Scripts\PathFinding\Grid.cs" />
+    <Compile Include="Assets\Scripts\CollisionsProcessor.cs" />
+    <Compile Include="Assets\Scripts\Door.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="UnityEngine">

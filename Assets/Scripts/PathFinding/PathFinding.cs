@@ -77,10 +77,10 @@ namespace PathFind
                         continue;
                     }
 
-                    int newMovementCostToNeighbour = currentNode.gCost + GetDistance(currentNode, neighbour) * (int)(10.0f * neighbour.penalty);
+                    int newMovementCostToNeighbour = currentNode.gCost + GetDistance(currentNode, neighbour) * (int)(neighbour.penalty);
                     if (newMovementCostToNeighbour < neighbour.gCost || !openSet.Contains(neighbour))
                     {
-                        neighbour.gCost = newMovementCostToNeighbour;
+                        neighbour.gCost = 10 * newMovementCostToNeighbour;
                         neighbour.hCost = GetDistance(neighbour, targetNode);
                         neighbour.parent = currentNode;
 
@@ -112,9 +112,11 @@ namespace PathFind
             int dstX = Mathf.Abs(nodeA.gridX - nodeB.gridX);
             int dstY = Mathf.Abs(nodeA.gridY - nodeB.gridY);
 
-            if (dstX > dstY)
-                return 14 * dstY + 10 * (dstX - dstY);
-            return 14 * dstX + 10 * (dstY - dstX);
+            //if (dstX > dstY)
+            //    return 14 * dstY + 10 * (dstX - dstY);
+            //return 14 * dstX + 10 * (dstY - dstX);
+
+            return (dstX + dstY);
         }
     }
 
