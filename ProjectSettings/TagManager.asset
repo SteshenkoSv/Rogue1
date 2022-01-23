@@ -6,6 +6,8 @@ TagManager:
   tags:
   - Chest
   - Enemy
+  - Door
+  - Shrine
   layers:
   - Default
   - TransparentFX

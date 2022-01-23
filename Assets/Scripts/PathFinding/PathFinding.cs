@@ -80,7 +80,7 @@ namespace PathFind
                     int newMovementCostToNeighbour = currentNode.gCost + GetDistance(currentNode, neighbour) * (int)(neighbour.penalty);
                     if (newMovementCostToNeighbour < neighbour.gCost || !openSet.Contains(neighbour))
                     {
-                        neighbour.gCost = 10 * newMovementCostToNeighbour;
+                        neighbour.gCost = 1000 * newMovementCostToNeighbour;
                         neighbour.hCost = GetDistance(neighbour, targetNode);
                         neighbour.parent = currentNode;
 

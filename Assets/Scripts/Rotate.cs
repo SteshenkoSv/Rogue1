@@ -8,26 +8,57 @@ public class Rotate : MonoBehaviour
     int rotateDirection = 0;
 
     [SerializeField]
-    Rigidbody2D rbToRotate;
+    GameObject goToRotate;
+
+    private static Rotate _instance;
+    public static Rotate Instance { get { return _instance; } }
+
+    private bool rotateAllowed;
+
+    private void Awake()
+    {
+        if (_instance != null && _instance != this)
+        {
+            Destroy(this.gameObject);
+        }
+        else
+        {
+            _instance = this;
+        }
+
+        rotateAllowed = true;
+    }
 
     void Update()
     {
-        if (Input.GetKey(KeyCode.A))
+        if (rotateAllowed) 
         {
-            rotateDirection = 1;
-        }
-        else if (Input.GetKey(KeyCode.D))
-        {
-            rotateDirection = -1;
-        }
-        else 
-        {
-            rotateDirection = 0;
+            if (Input.GetKey(KeyCode.A))
+            {
+                rotateDirection = 1;
+            }
+            else if (Input.GetKey(KeyCode.D))
+            {
+                rotateDirection = -1;
+            }
+            else
+            {
+                rotateDirection = 0;
+            }
         }
     }
 
     private void FixedUpdate()
     {
-        rbToRotate.AddTorque(rotateDirection * rotationSpeed * Time.fixedDeltaTime);
+        if (rotateAllowed)
+        {
+            //rbToRotate.AddTorque(rotateDirection * rotationSpeed * Time.fixedDeltaTime);
+            goToRotate.transform.Rotate(0,0, rotateDirection * rotationSpeed * Time.fixedDeltaTime);
+        }
+    }
+
+    public void RotateDisable() 
+    {
+        rotateAllowed = false;
     }
 }
