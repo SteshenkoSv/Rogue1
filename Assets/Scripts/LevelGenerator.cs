@@ -4,6 +4,9 @@ using System.Collections.Generic;
 
 public class LevelGenerator : MonoBehaviour
 {
+    private static LevelGenerator _instance;
+    public static LevelGenerator Instance { get { return _instance; } }
+
     public Tilemap tileMapWalls;
     public Tilemap tileMapBackground;
     public Tile wallTile;
@@ -12,26 +15,56 @@ public class LevelGenerator : MonoBehaviour
     public int mapWidth;
     public int mapHeight;
 
-    public List<WayPoints> wayPoints;
+    List<PathFind.Point> path = new List<PathFind.Point>();
 
-    [System.Serializable]
-    public class WayPoints
+    private bool[,] tilesmap;
+
+    public GameObject levelGo;
+
+    public GameObject playerPb;
+    public GameObject enemyPb;
+    public GameObject chestPb;
+    public GameObject lightPb;
+    public GameObject doorPb;
+
+    private void Awake()
     {
-        public Vector2Int waypoint;
+        if (_instance != null && _instance != this)
+        {
+            Destroy(this.gameObject);
+        }
+        else
+        {
+            _instance = this;
+        }
     }
-
-    private int[,] mapLayout;
 
     private void Start()
     {
-        mapLayout = new int[mapWidth, mapHeight];
+        tilesmap = new bool[mapWidth, mapHeight];
         GenerateMap();
     }
 
-    private void GenerateMap() 
+    public void GenerateMap() 
     {
+        levelGo.transform.rotation = Quaternion.identity;
+
+        FindPath();
         GenerateBackground();
         GenerateWalls();
+        Spawn("player", PathPointToWorld(path[path.Count - 1]));
+        Spawn("door", PathPointToWorld(path[path.Count-2]));
+
+        for (int i = 1; i < path.Count - 2; i+=3)
+        {
+            Spawn("enemy", PathPointToWorld(path[i]));
+        }
+
+        for (int i = 2; i < path.Count - 2; i += 4)
+        {
+            Spawn("chest", PathPointToWorld(path[i]));
+        }
+
     }
 
     private void GenerateBackground() 
@@ -39,13 +72,9 @@ public class LevelGenerator : MonoBehaviour
         tileMapBackground.ClearAllTiles();
         tileMapBackground.transform.position = new Vector3(-mapWidth / 2f, -mapHeight / 2f, 0f);
 
-        for (int i = 0; i < mapWidth; i++)
+        foreach (PathFind.Point p in path)
         {
-            for (int j = 0; j < mapHeight; j++)
-            {
-                tileMapBackground.SetTile(new Vector3Int(i, j, 0), backgroundTile);
-                mapLayout[i, j] = 0;
-            }
+            tileMapBackground.SetTile(new Vector3Int(p.x, p.y, 0), backgroundTile);
         }
     }
 
@@ -58,23 +87,92 @@ public class LevelGenerator : MonoBehaviour
         {
             for (int j = 0; j < mapHeight; j++)
             {
-                if (i == 0 || j == 0 || i == mapWidth-1 || j == mapHeight-1) 
+                int pathCrossCounter = 0;
+
+                foreach (PathFind.Point p in path)
+                {
+                    if (p.x == i && p.y == j)
+                        pathCrossCounter++;
+                }
+
+                if (pathCrossCounter == 0)
                 {
                     tileMapWalls.SetTile(new Vector3Int(i, j, 0), wallTile);
-                    mapLayout[i, j] = 1;
                 }
             }
         }
     }
 
-    private void FindPath() 
+    private void FindPath()
     {
-        //// create the tiles map
-        //bool[,] tilesmap = new bool[mapWidth, mapHeight];
-        //// set values here....
-        //// true = walkable, false = blocking
+        for (int i = 0; i < mapWidth; i++)
+        {
+            for (int j = 0; j < mapHeight; j++)
+            {
+                tilesmap[i, j] = true;
+            }
+        }
 
-        //// create a grid
-        //PathFind.Grid grid = new PathFind.Grid(width, height, tilesmap);
+        PathFind.Grid grid = new PathFind.Grid(mapWidth, mapHeight, tilesmap);
+
+        PathFind.Point _from = null;
+        PathFind.Point _to = null;
+
+        while (_from == _to) 
+        {
+            int randFromX = Random.Range(1, mapWidth - 1);
+            int randFromY = Random.Range(1, mapHeight - 1);
+            _from = new PathFind.Point(randFromX, randFromY);
+
+            int randToX = Random.Range(1, mapWidth - 1);
+            int randToY = Random.Range(1, mapHeight - 1);
+            _to = new PathFind.Point(randToX, randToY);
+        }
+
+        path = PathFind.Pathfinding.FindPath(grid, _from, _to);
+        path.Add(_from);
+    }
+    
+    private void AddObstacleOnPath(List<PathFind.Point> pth) 
+    {
+        foreach (PathFind.Point p in pth)
+        {
+
+        }
+    }
+
+    private void Spawn(string objectName, Vector3 spawnPosition) 
+    {
+        GameObject prefabToSpawn = null;
+
+        switch (objectName) 
+        {
+            case "player":
+                prefabToSpawn = playerPb;
+                break;
+            case "enemy":
+                prefabToSpawn = enemyPb;
+                break;
+            case "chest":
+                prefabToSpawn = chestPb;
+                break;
+            case "light":
+                prefabToSpawn = lightPb;
+                break;
+            case "door":
+                prefabToSpawn = doorPb;
+                break;
+        }
+
+        if (prefabToSpawn != null)
+        {
+            GameObject instance = Instantiate(prefabToSpawn, spawnPosition, Quaternion.identity);
+            instance.transform.parent = levelGo.transform;
+        }
+    }
+
+    private Vector3 PathPointToWorld(PathFind.Point point) 
+    {
+        return new Vector3(point.x - mapWidth / 2f, point.y - mapHeight / 2f, 0);
     }
 }
