@@ -31,12 +31,13 @@ public class MusicPlayer : MonoBehaviour
         audioSource = GetComponent<AudioSource>();
         audioSource.clip = musicClip;
         audioSource.loop = true;
-        audioSource.volume = volumeSlider.value;
+        AudioListener.volume = volumeSlider.value;
+        //audioSource.volume = volumeSlider.value;
         audioSource.Play();
     }
 
     private void Update()
     {
-        audioSource.volume = volumeSlider.value;
+        AudioListener.volume = volumeSlider.value;
     }
 }
